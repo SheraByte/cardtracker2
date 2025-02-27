@@ -20,7 +20,7 @@ else:
     details_df.columns = ['Card Name', 'Credit Limit', 'Remarks']
     
     # Format credit limit as currency
-    details_df['Credit Limit'] = details_df['Credit Limit'].apply(lambda x: f"${x:,.2f}")
+    details_df['Credit Limit'] = details_df['Credit Limit'].apply(lambda x: f"Rs. {x:,.2f}")
     
     # Display as a clean table
     st.dataframe(
