@@ -17,6 +17,17 @@ new_card_data = render_add_card_form()
 if new_card_data:
     st.session_state.card_storage.add_card(new_card_data)
     st.success("Card added successfully!")
+    
+    # Clear the form inputs in session state
+    if "new_nickname" in st.session_state:
+        st.session_state.new_nickname = ""
+    if "new_credit_limit" in st.session_state:
+        st.session_state.new_credit_limit = 0.0
+    if "new_notes" in st.session_state:
+        st.session_state.new_notes = ""
+    if "new_payment_status" in st.session_state:
+        st.session_state.new_payment_status = "Unpaid"
+        
     st.rerun()
 
 # Quick Date Update Section
