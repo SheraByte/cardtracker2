@@ -73,7 +73,7 @@ def render_card_list(cards_df, on_status_change, on_delete=None, show_full_detai
                     st.write(f"Due Date: {card['due_date']}")
 
                 with col2:
-                    st.write(f"Credit Limit: ${card['credit_limit']:,.2f}")
+                    st.write(f"Credit Limit: Rs.{card['credit_limit']:,.2f}")
                     st.write(f"Notes: {card['notes']}")
 
                 with col3:
