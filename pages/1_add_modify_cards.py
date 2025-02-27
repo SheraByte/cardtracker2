@@ -1,6 +1,8 @@
 import streamlit as st
 from storage import CardStorage
 from components import render_add_card_form, render_card_list
+from utils import calculate_due_date
+from datetime import datetime
 
 # Access the shared session state
 if 'card_storage' not in st.session_state:
@@ -16,6 +18,48 @@ if new_card_data:
     st.session_state.card_storage.add_card(new_card_data)
     st.success("Card added successfully!")
     st.rerun()
+
+# Quick Date Update Section
+st.header("Quick Date Update")
+cards = st.session_state.card_storage.get_all_cards()
+if len(cards) > 0:
+    selected_card = st.selectbox(
+        "Select Card to Update",
+        options=cards['nickname'].tolist(),
+        key="quick_update_card"
+    )
+
+    card_idx = cards[cards['nickname'] == selected_card].index[0]
+    card = cards.iloc[card_idx].to_dict()
+
+    col1, col2, col3 = st.columns([2, 2, 1])
+    with col1:
+        new_statement_date = st.date_input(
+            "New Statement Date",
+            datetime.strptime(card['statement_date'], '%Y-%m-%d').date(),
+            key="quick_statement_update"
+        )
+
+    with col2:
+        auto_calculate = st.checkbox("Auto-calculate Due Date (21 days)", value=True)
+        if auto_calculate:
+            new_due_date = calculate_due_date(new_statement_date.strftime('%Y-%m-%d'))
+            st.info(f"Calculated Due Date: {new_due_date}")
+        else:
+            new_due_date = st.date_input(
+                "New Due Date",
+                datetime.strptime(card['due_date'], '%Y-%m-%d').date(),
+                key="quick_due_update"
+            ).strftime('%Y-%m-%d')
+
+    with col3:
+        if st.button("Update Dates", type="primary"):
+            updated_card = card.copy()
+            updated_card['statement_date'] = new_statement_date.strftime('%Y-%m-%d')
+            updated_card['due_date'] = new_due_date
+            st.session_state.card_storage.update_card(card['id'], updated_card)
+            st.success("Dates updated successfully!")
+            st.rerun()
 
 # Existing Cards Section
 st.header("Modify Existing Cards")
